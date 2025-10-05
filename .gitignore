@@ -494,5 +494,8 @@ FodyWeavers.xsd
 
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
+out/
+build/
+.vscode/
 
 # End of https://www.toptal.com/developers/gitignore/api/qt,windows,c++,visualstudio

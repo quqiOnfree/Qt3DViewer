@@ -186,7 +186,7 @@ MeshViewerWidgetT<M>::open_mesh(const char* _filename, IO::Options _opt)
     
     //    
 #if defined(WIN32)
-    updateGL();
+    update();
 #endif
 
     setWindowTitle(QFileInfo(_filename).fileName());
@@ -234,7 +234,7 @@ bool MeshViewerWidgetT<M>::set_texture( QImage& _texsrc )
     _texsrc = _texsrc.scaled( tex_w, tex_h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
   }
 
-  QImage texture( QGLWidget::convertToGLFormat ( _texsrc ) );
+  QImage texture = _texsrc.convertToFormat(QImage::Format_RGB32);
   
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glPixelStorei(GL_UNPACK_SKIP_ROWS,   0);
@@ -734,7 +734,7 @@ MeshViewerWidgetT<M>::keyPressEvent( QKeyEvent* _event)
         std::cout << "use color: " << (use_color_?"yes\n":"no\n");
         if (!use_color_)
           glColor3f(1.0f, 1.0f, 1.0f);
-        updateGL();
+        update();
       }
       break;
 
@@ -749,7 +749,7 @@ MeshViewerWidgetT<M>::keyPressEvent( QKeyEvent* _event)
         show_vnormals_ = !show_vnormals_;
         std::cout << "show vertex normals: " << (show_vnormals_?"yes\n":"no\n");
       }
-      updateGL();
+      update();
       break;
 
     case Key_I:
@@ -768,7 +768,7 @@ MeshViewerWidgetT<M>::keyPressEvent( QKeyEvent* _event)
                 << opt_.check(opt_.FaceNormal) << std::endl;
       std::cout << "face color     : " 
                 << opt_.check(opt_.FaceColor) << std::endl;
-      this->QGLViewerWidget::keyPressEvent( _event );
+      this->QOpenGLViewerWidget::keyPressEvent( _event );
       break;
 
     case Key_T:
@@ -779,11 +779,11 @@ MeshViewerWidgetT<M>::keyPressEvent( QKeyEvent* _event)
         case GL_BLEND:    TEXMODE(GL_REPLACE); break;
         case GL_REPLACE:  TEXMODE(GL_MODULATE); break;
       }
-      updateGL();
+      update();
       break;
 
     default:
-      this->QGLViewerWidget::keyPressEvent( _event );
+      this->QOpenGLViewerWidget::keyPressEvent( _event );
   }
 }
 

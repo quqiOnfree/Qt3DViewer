@@ -55,8 +55,8 @@
 #include <OpenMesh/Core/Mesh/Attributes.hh>
 #include <OpenMesh/Tools/Utils/StripifierT.hh>
 #include <OpenMesh/Tools/Utils/Timer.hh>
-//#include <OpenMesh/Apps/QtViewer/QGLViewerWidget.hh>
-#include <openmeshApps/QGLViewerWidget.h>
+//#include <OpenMesh/Apps/QtViewer/QOpenGLViewerWidget.hh>
+#include <openmeshApps/QOpenGLViewerWidget.h>
 
 
 //== FORWARDS =================================================================
@@ -68,7 +68,7 @@ class QImage;
 
 	      
 template <typename M>
-class MeshViewerWidgetT : public QGLViewerWidget
+class MeshViewerWidgetT : public QOpenGLViewerWidget
 {
 
 public:
@@ -79,7 +79,7 @@ public:
 
   /// default constructor
   explicit MeshViewerWidgetT(QWidget* _parent=0)
-    : QGLViewerWidget(_parent),
+    : QOpenGLViewerWidget(_parent),
       f_strips_(false), 
       tex_id_(0),
       tex_mode_(GL_MODULATE),

@@ -42,15 +42,17 @@
 
 
 
-#ifndef OPENMESHAPPS_QGLVIEWERWIDGET_HH
-#define OPENMESHAPPS_QGLVIEWERWIDGET_HH
+#ifndef OPENMESHAPPS_QOpenGLVIEWERWIDGET_HH
+#define OPENMESHAPPS_QOpenGLVIEWERWIDGET_HH
 
 
 //== INCLUDES =================================================================
 
 
 #include <OpenMesh/Core/Geometry/VectorT.hh>
-#include <QGLWidget>
+#include <QOpenGLWidget>
+#include <QActionGroup>
+#include <QOpenGLFunctions_3_3_Core>
 #include <string>
 #include <vector>
 #include <map>
@@ -65,22 +67,22 @@ class QAction;
 //== CLASS DEFINITION =========================================================
 
   
-class QGLViewerWidget : public QGLWidget
+class QOpenGLViewerWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 {
 
   Q_OBJECT
   
 public:
-  typedef QGLWidget Super;
+  typedef QOpenGLWidget Super;
    
   // Default constructor.
-  explicit QGLViewerWidget( QWidget* _parent=0 );
+  explicit QOpenGLViewerWidget( QWidget* _parent=0 );
 
   // 
-  QGLViewerWidget( QGLFormat& _fmt, QWidget* _parent=0 );
+  QOpenGLViewerWidget( QSurfaceFormat& _fmt, QWidget* _parent=0 );
 
   // Destructor.
-  virtual ~QGLViewerWidget();
+  virtual ~QOpenGLViewerWidget();
 
 private:
 
@@ -125,16 +127,16 @@ protected:
   virtual void draw_scene(const std::string& _draw_mode);
 
   double performance(void);
-  //ÉèÖÃÄ¬ÈÏ²ÄÖÊ
+  //ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½Ï²ï¿½ï¿½ï¿½
   void setDefaultMaterial(void);
-  //ÉèÖÃÄ¬ÈÏµÆ¹â
+  //ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ÏµÆ¹ï¿½
   void setDefaultLight(void);
 
 private slots:  
 
   // popup menu clicked
   void slotDrawMode(QAction *_mode); 
-  //ÏìÓ¦½ØÍ¼
+  //ï¿½ï¿½Ó¦ï¿½ï¿½Í¼
   void slotSnapshot( void );
 
   
@@ -199,6 +201,6 @@ private:
 
 
 //=============================================================================
-#endif // OPENMESHAPPS_QGLVIEWERWIDGET_HH
+#endif // OPENMESHAPPS_QOpenGLVIEWERWIDGET_HH
 //=============================================================================
 

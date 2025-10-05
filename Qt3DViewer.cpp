@@ -34,7 +34,7 @@ Qt3DViewer::Qt3DViewer(QWidget *parent)
 void Qt3DViewer::displayMesh()
 {
     OpenMesh::IO::Options opt;
-    _meshViewerWidget->open_mesh("E:/skull.stl", opt);
+    // _meshViewerWidget->open_mesh("./Sphere.stl", opt);
 }
 
 void Qt3DViewer::createMenus()
