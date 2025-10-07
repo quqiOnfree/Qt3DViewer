@@ -53,6 +53,7 @@
 #include <QOpenGLWidget>
 #include <QActionGroup>
 #include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLShaderProgram>
 #include <string>
 #include <vector>
 #include <map>
@@ -125,6 +126,7 @@ protected:
 
   // draw the scene: will be called by the painGL() method.
   virtual void draw_scene(const std::string& _draw_mode);
+  virtual void setup_shader_uniforms();
 
   double performance(void);
   //����Ĭ�ϲ���
@@ -181,6 +183,7 @@ private:
   // popup menu for draw mode selection
   QMenu*               popup_menu_;
   QActionGroup*        draw_modes_group_;
+  QOpenGLShaderProgram* shader_program_;
   typedef std::map<QString,QAction*> ActionMap;
   ActionMap            names_to_actions;
   unsigned int              draw_mode_;

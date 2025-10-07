@@ -55,7 +55,6 @@
 #include <OpenMesh/Core/Mesh/Attributes.hh>
 #include <OpenMesh/Tools/Utils/StripifierT.hh>
 #include <OpenMesh/Tools/Utils/Timer.hh>
-//#include <OpenMesh/Apps/QtViewer/QOpenGLViewerWidget.hh>
 #include <openmeshApps/QOpenGLViewerWidget.h>
 
 

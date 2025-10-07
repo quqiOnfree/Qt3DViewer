@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/Qt3DViewer">
         <file>Resources/images/importMesh.png</file>
+        <file>Resources/shaders/basic.vert</file>
+        <file>Resources/shaders/basic.frag</file>
     </qresource>
 </RCC>

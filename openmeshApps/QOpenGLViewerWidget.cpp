@@ -193,26 +193,41 @@ void QOpenGLViewerWidget::setDefaultLight(void)
 void QOpenGLViewerWidget::initializeGL()
 {  
   initializeOpenGLFunctions();
-  // OpenGL state
-  glClearColor(0.0, 0.0, 0.0, 0.0);
-  glDisable( GL_DITHER );
-  glEnable( GL_DEPTH_TEST );
 
-  // Material
-  setDefaultMaterial();
+  // OpenGL state
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glDisable(GL_DITHER);
+  glEnable(GL_DEPTH_TEST);
+
+  // // Material
+  // setDefaultMaterial();
   
-  // Lighting
-  glLoadIdentity();
-  setDefaultLight();  
+  // // Lighting
+  // glLoadIdentity();
+  // setDefaultLight();  
   
-  // Fog
-  GLfloat fogColor[4] = { 0.3f, 0.3f, 0.4f, 1.0f };
-  glFogi(GL_FOG_MODE,    GL_LINEAR);
-  glFogfv(GL_FOG_COLOR,  fogColor);
-  glFogf(GL_FOG_DENSITY, 0.35f);
-  glHint(GL_FOG_HINT,    GL_DONT_CARE);
-  glFogf(GL_FOG_START,    5.0f);
-  glFogf(GL_FOG_END,     25.0f);
+  // // Fog
+  // GLfloat fogColor[4] = { 0.3f, 0.3f, 0.4f, 1.0f };
+  // glFogi(GL_FOG_MODE,    GL_LINEAR);
+  // glFogfv(GL_FOG_COLOR,  fogColor);
+  // glFogf(GL_FOG_DENSITY, 0.35f);
+  // glHint(GL_FOG_HINT,    GL_DONT_CARE);
+  // glFogf(GL_FOG_START,    5.0f);
+  // glFogf(GL_FOG_END,     25.0f);
+
+  shader_program_ = new QOpenGLShaderProgram(this);
+  shader_program_->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/Qt3DViewer/Resources/shaders/basic.vert");
+  shader_program_->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/Qt3DViewer/Resources/shaders/basic.frag");
+  shader_program_->link();
+
+  shader_program_->bind();
+  shader_program_->setUniformValue("lightPos", QVector3D(2.0f, 2.0f, 2.0f));
+  shader_program_->setUniformValue("lightColor", QVector3D(1.0f, 1.0f, 1.0f));
+  shader_program_->setUniformValue("viewPos", QVector3D(0.0f, 0.0f, 5.0f));
+  shader_program_->setUniformValue("useLighting", true);
+  shader_program_->setUniformValue("useFlatShading", false);
+  shader_program_->setUniformValue("objectColor", QVector3D(0.7f, 0.7f, 0.7f));
+  shader_program_->release();
 
   // scene pos and size
   glMatrixMode(GL_MODELVIEW);
@@ -239,16 +254,33 @@ void QOpenGLViewerWidget::resizeGL( int _w, int _h )
 void QOpenGLViewerWidget::paintGL()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glMatrixMode( GL_PROJECTION );
-  glLoadMatrixd( projection_matrix_ );
-  glMatrixMode( GL_MODELVIEW );
-  glLoadMatrixd( modelview_matrix_ );
+    
+  shader_program_->bind();
+  QMatrix4x4 projectionMatrix = QMatrix4x4(
+      projection_matrix_[0], projection_matrix_[4], projection_matrix_[8], projection_matrix_[12],
+      projection_matrix_[1], projection_matrix_[5], projection_matrix_[9], projection_matrix_[13],
+      projection_matrix_[2], projection_matrix_[6], projection_matrix_[10], projection_matrix_[14],
+      projection_matrix_[3], projection_matrix_[7], projection_matrix_[11], projection_matrix_[15]
+  );
+
+  QMatrix4x4 modelviewMatrix = QMatrix4x4(
+      modelview_matrix_[0], modelview_matrix_[4], modelview_matrix_[8], modelview_matrix_[12],
+      modelview_matrix_[1], modelview_matrix_[5], modelview_matrix_[9], modelview_matrix_[13],
+      modelview_matrix_[2], modelview_matrix_[6], modelview_matrix_[10], modelview_matrix_[14],
+      modelview_matrix_[3], modelview_matrix_[7], modelview_matrix_[11], modelview_matrix_[15]
+  );
+
+  shader_program_->setUniformValue("projection", projectionMatrix);
+  shader_program_->setUniformValue("modelview", modelviewMatrix);
+  setup_shader_uniforms();
 
   if (draw_mode_)
   {
     assert(draw_mode_ <= n_draw_modes_);
     draw_scene(draw_mode_names_[draw_mode_-1]);
   }
+
+  shader_program_->release();
 }
 
 
@@ -256,26 +288,42 @@ void QOpenGLViewerWidget::paintGL()
 
 
 void QOpenGLViewerWidget::draw_scene(const std::string& _draw_mode)
-{  
+{
+  shader_program_->bind();
+
   if (_draw_mode == "Wireframe")
   {
-    glDisable(GL_LIGHTING);
-   // glutWireTeapot(0.5);
+    shader_program_->setUniformValue("useLighting", false);
+    shader_program_->setUniformValue("objectColor", QVector3D(1.0f, 1.0f, 1.0f));
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glLineWidth(1.0f);
   }
 
   else if (_draw_mode == "Solid Flat")
   {
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    //glutSolidTeapot(0.5);
+    shader_program_->setUniformValue("useLighting", true);
+    shader_program_->setUniformValue("useFlatShading", true);
+    shader_program_->setUniformValue("objectColor", QVector3D(0.7f, 0.7f, 0.7f));
   }
 
   else if (_draw_mode == "Solid Smooth")
   {
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
-    //glutSolidTeapot(0.5);
+    shader_program_->setUniformValue("useLighting", true);
+    shader_program_->setUniformValue("useFlatShading", false);
+    shader_program_->setUniformValue("objectColor", QVector3D(0.7f, 0.7f, 0.7f));
   }
+
+  shader_program_->release();
+}
+
+void QOpenGLViewerWidget::setup_shader_uniforms()
+{
+  shader_program_->setUniformValue("lightPos", QVector3D(2.0f, 2.0f, 2.0f));
+  shader_program_->setUniformValue("lightColor", QVector3D(1.0f, 1.0f, 1.0f));
+  shader_program_->setUniformValue("viewPos", QVector3D(0.0f, 0.0f, 5.0f));
+
+  shader_program_->setUniformValue("useLighting", true);
 }
 
 

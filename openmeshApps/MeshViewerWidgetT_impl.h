@@ -234,7 +234,7 @@ bool MeshViewerWidgetT<M>::set_texture( QImage& _texsrc )
     _texsrc = _texsrc.scaled( tex_w, tex_h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
   }
 
-  QImage texture = _texsrc.convertToFormat(QImage::Format_RGB32);
+  QImage texture = _texsrc.convertToFormat(QImage::Format_RGBA8888);
   
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glPixelStorei(GL_UNPACK_SKIP_ROWS,   0);
