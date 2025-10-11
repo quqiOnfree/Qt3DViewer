@@ -497,5 +497,6 @@ FodyWeavers.xsd
 out/
 build/
 .vscode/
+CMakeSettings.json
 
 # End of https://www.toptal.com/developers/gitignore/api/qt,windows,c++,visualstudio
